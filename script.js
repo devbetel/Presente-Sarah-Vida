@@ -1,5 +1,5 @@
 const canvas = document.getElementById('c');
-const ctx = canvas.getContext('2d', { alpha: false }); // Otimização: desabilita transparência
+const ctx = canvas.getContext('2d', { alpha: false });
 
 let O = canvas.width = innerWidth;
 let Q = canvas.height = innerHeight;
@@ -7,13 +7,11 @@ const M = Math;
 const R = M.random;
 const C = M.cos;
 const S = M.sin;
-const Y = 6.283185307179586; // Math.PI * 2 pré-calculado
+const Y = 6.283185307179586;
 
-let centerY = Q / 2 - 80;
 let allTrails = [];
 let isLowPerformance = false;
 
-// Detecta se é dispositivo móvel ou performance baixa
 function detectPerformance() {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     const isSlowDevice = navigator.hardwareConcurrency && navigator.hardwareConcurrency < 4;
@@ -26,7 +24,6 @@ function createParticleTrails(num, targetPath, behavior) {
     const trails = [];
     if (targetPath.length === 0) return trails;
 
-    // Reduz partículas em dispositivos lentos
     if (isLowPerformance) num = Math.floor(num * 0.6);
 
     for (let i = 0; i < num; i++) {
@@ -38,7 +35,6 @@ function createParticleTrails(num, targetPath, behavior) {
         const B = R() * 20 + 50;
         const trail = [];
         
-        // Reduz comprimento da trilha em dispositivos lentos
         const trailLength = isLowPerformance ? 20 : 32;
         
         for (let k = 0; k < trailLength; k++) {
@@ -73,7 +69,6 @@ function getPointsForText(textString, fontSize, yPos) {
     const letterPoints = [];
     let currentX = (O - tempCtx.measureText(textString).width) / 2;
 
-    // Otimização: amostragem de pixels adaptativa
     const sampleRate = isLowPerformance ? 2 : 1;
 
     for (const char of textString) {
@@ -97,7 +92,6 @@ function getPointsForText(textString, fontSize, yPos) {
 }
 
 function loop() {
-    // Fade effect otimizado
     ctx.fillStyle = "rgba(0,0,0,.2)";
     ctx.fillRect(0, 0, O, Q);
 
@@ -117,7 +111,7 @@ function loop() {
                 if (R() > 0.998) { 
                     u.q = ~~(R() * trail.targetPath.length);
                 }
-            } else { // 'heart'
+            } else {
                 if (R() > 0.95) {
                     u.q = ~~(R() * trail.targetPath.length);
                 } else {
@@ -137,7 +131,6 @@ function loop() {
         u.X *= u.F;
         u.Y *= u.F;
 
-        // Otimização: desenha todas as partículas de uma vez
         ctx.beginPath();
         for (let k = 0; k < trail.length; k++) {
             const T = trail[k];
@@ -155,12 +148,12 @@ function loop() {
 }
 
 function init() {
-    // Limpa trails anteriores
     allTrails = [];
     
-    // Coração
+    // AJUSTE RESPONSIVO: Coração menor e mais centralizado
     const heartPath = [];
-    const heartSize = M.min(220, O * 0.25); // Tamanho responsivo do coração
+    const heartSize = M.min(120, O * 0.18); // Reduzido para mobile
+    const centerY = Q * 0.3; // Posição mais alta (30% da altura)
     
     for (let i = 0; i < Y; i += 0.2) {
         heartPath.push([
@@ -172,10 +165,10 @@ function init() {
     const heartParticles = isLowPerformance ? 20 : 32;
     allTrails.push(...createParticleTrails(heartParticles, heartPath, 'heart'));
 
-    // Texto "Te Amo"
+    // AJUSTE RESPONSIVO: Texto "Te Amo" menor e posicionado abaixo do coração
     const textString = "Te Amo";
-    const fontSize = M.min(180, O * 0.35);
-    const textYPosition = centerY + M.min(380, Q * 0.45);
+    const fontSize = M.min(80, O * 0.18); // Tamanho reduzido
+    const textYPosition = centerY + heartSize * 2.5 + fontSize; // Abaixo do coração
 
     const letterTargetPoints = getPointsForText(textString, fontSize, textYPosition);
 
@@ -190,7 +183,6 @@ function init() {
     });
 }
 
-// Animação otimizada
 let lastTime = 0;
 const targetFPS = isLowPerformance ? 30 : 60;
 const frameInterval = 1000 / targetFPS;
@@ -206,18 +198,15 @@ function animate(currentTime) {
     }
 }
 
-// Redimensionamento otimizado
 let resizeTimeout;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
         O = canvas.width = innerWidth;
         Q = canvas.height = innerHeight;
-        centerY = Q / 2 - 80;
         init();
     }, 250);
 });
 
-// Inicialização
 init();
 animate(0);
