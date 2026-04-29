@@ -150,10 +150,10 @@ function loop() {
 function init() {
     allTrails = [];
     
-    // AJUSTE RESPONSIVO: Coração menor e mais centralizado
+    // TAMANHO MAIOR e IGUAL para PC e CELULAR
     const heartPath = [];
-    const heartSize = M.min(120, O * 0.18); // Reduzido para mobile
-    const centerY = Q * 0.3; // Posição mais alta (30% da altura)
+    const heartSize = M.min(180, O * 0.28); // Aumentado!
+    const centerY = Q * 0.32; // Centralizado melhor
     
     for (let i = 0; i < Y; i += 0.2) {
         heartPath.push([
@@ -165,10 +165,10 @@ function init() {
     const heartParticles = isLowPerformance ? 20 : 32;
     allTrails.push(...createParticleTrails(heartParticles, heartPath, 'heart'));
 
-    // AJUSTE RESPONSIVO: Texto "Te Amo" menor e posicionado abaixo do coração
+    // TEXTO "Te Amo" MAIOR e BEM LEGÍVEL
     const textString = "Te Amo";
-    const fontSize = M.min(80, O * 0.18); // Tamanho reduzido
-    const textYPosition = centerY + heartSize * 2.5 + fontSize; // Abaixo do coração
+    const fontSize = M.min(120, O * 0.25); // Aumentado de 80 para 120!
+    const textYPosition = centerY + heartSize * 2.5 + fontSize * 0.5;
 
     const letterTargetPoints = getPointsForText(textString, fontSize, textYPosition);
 
